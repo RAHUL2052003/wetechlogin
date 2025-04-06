@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Registration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            position: relative;
+            width: 100%;
+            max-width: 850px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .form-container {
+            position: relative;
+            width: 50%;
+            height: 100%;
+            padding: 40px;
+            transition: all 0.6s ease-in-out;
+        }
+        
+        .sign-in-container {
+            z-index: 2;
+        }
+        
+        .sign-up-container {
+            opacity: 0;
+            z-index: 1;
+        }
+        
+        .container.active .sign-in-container {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        
+        .container.active .sign-up-container {
+            transform: translateX(100%);
+            opacity: 1;
+            z-index: 5;
+        }
+        
+        .overlay-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            transition: transform 0.6s ease-in-out;
+            z-index: 100;
+        }
+        
+        .container.active .overlay-container {
+            transform: translateX(-100%);
+        }
+        
+        .overlay {
+            position: relative;
+            left: -100%;
+            height: 100%;
+            width: 200%;
+            background: linear-gradient(to right, #ff4b2b, #ff416c);
+            color: #fff;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+        
+        .container.active .overlay {
+            transform: translateX(50%);
+        }
+        
+        .overlay-panel {
+            position: absolute;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: 50%;
+            padding: 0 40px;
+            text-align: center;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+        
+        .overlay-left {
+            transform: translateX(-20%);
+        }
+        
+        .container.active .overlay-left {
+            transform: translateX(0);
+        }
+        
+        .overlay-right {
+            right: 0;
+            transform: translateX(0);
+        }
+        
+        .container.active .overlay-right {
+            transform: translateX(20%);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        p {
+            font-size: 1rem;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        button {
+            background: #ff4b2b;
+            color: #fff;
+            border: none;
+            padding: 12px 45px;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: transform 80ms ease-in;
+        }
+        
+        button:active {
+            transform: scale(0.95);
+        }
+        
+        button.ghost {
+            background: transparent;
+            border: 1px solid #fff;
+        }
+        
+        .social-container {
+            margin: 20px 0;
+        }
+        
+        .social-container a {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            margin: 0 5px;
+            border-radius: 50%;
+            background: #fff;
+            color: #ff4b2b;
+            text-decoration: none;
+        }
+        
+        footer {
+            margin-top: 20px;
+            font-size: 0.8rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .form-container, .overlay-container {
+                width: 100%;
+                height: auto;
+            }
+            
+            .overlay-container {
+                position: relative;
+                left: 0;
+                height: 200px;
+            }
+            
+            .container.active .overlay-container {
+                transform: translateY(-100%);
+            }
+            
+            .overlay {
+                left: 0;
+                height: 100%;
+                width: 100%;
+                transform: translateY(0);
+            }
+            
+            .container.active .overlay {
+                transform: translateY(50%);
+            }
+            
+            .overlay-panel {
+                width: 100%;
+                padding: 20px;
+                transform: translateY(0);
+            }
+            
+            .container.active .overlay-left {
+                transform: translateY(-100%);
+            }
+            
+            .container.active .overlay-right {
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="form-container sign-in-container">
+            <form id="loginForm">
+                <h1>Sign in</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>or use your account</span>
+                <div class="form-group">
+                    <input type="email" id="loginEmail" placeholder="Email" required />
+                </div>
+                <div class="form-group">
+                    <input type="password" id="loginPassword" placeholder="Password" required />
+                </div>
+                <a href="#">Forgot your password?</a>
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+        <div class="form-container sign-up-container">
+            <form id="registerForm">
+                <h1>Create Account</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>or use your email for registration</span>
+                <div class="form-group">
+                    <input type="text" id="registerName" placeholder="Name" required />
+                </div>
+                <div class="form-group">
+                    <input type="email" id="registerEmail" placeholder="Email" required />
+                </div>
+                <div class="form-group">
+                    <input type="password" id="registerPassword" placeholder="Password" required />
+                </div>
+                <div class="form-group">
+                    <input type="password" id="registerConfirmPassword" placeholder="Confirm Password" required />
+                </div>
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Welcome Back!</h1>
+                    <p>To keep connected with us please login with your personal info</p>
+                    <button class="ghost" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Hello, Friend!</h1>
+                    <p>Enter your personal details and start journey with us</p>
+                    <button class="ghost" id="signUp">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const signUpButton = document.getElementById('signUp');
+            const signInButton = document.getElementById('signIn');
+            const container = document.getElementById('container');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+
+            signUpButton.addEventListener('click', () => {
+                container.classList.add('active');
+            });
+
+            signInButton.addEventListener('click', () => {
+                container.classList.remove('active');
+            });
+
+            // Form validation and submission
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                // Basic validation
+                if (!email || !password) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+                
+                // Here you would typically send the data to your server
+                console.log('Login submitted:', { email, password });
+                alert('Login successful! (This is a demo)');
+            });
+
+            registerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('registerName').value;
+                const email = document.getElementById('registerEmail').value;
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('registerConfirmPassword').value;
+                
+                // Basic validation
+                if (!name || !email || !password || !confirmPassword) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    alert('Passwords do not match');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    alert('Password must be at least 6 characters');
+                    return;
+                }
+                
+                // Here you would typically send the data to your server
+                console.log('Registration submitted:', { name, email, password });
+                alert('Registration successful! (This is a demo)');
+                
+                // Switch to login form after registration
+                container.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>
